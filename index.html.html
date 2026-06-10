@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Programme Bas du Corps</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --rose: #E8688A;
+  --rose-light: #FBEAF0;
+  --rose-mid: #F4C0D1;
+  --rose-dark: #99355a;
+  --peach: #F4A261;
+  --peach-light: #FEF3E8;
+  --lilac: #C3A6D4;
+  --lilac-light: #F5EEFB;
+  --mint: #7EC8B0;
+  --mint-light: #E8F7F2;
+  --bg: #FFFBF9;
+  --text: #2C1A20;
+  --muted: #9B7A85;
+  --border: #F0D5DC;
+  --warm-gray: #F7F0EE;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { width: 100%; overflow-x: hidden; }
+body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; line-height: 1.6; }
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, #FBEAF0 0%, #FEF0F5 50%, #F5EEFB 100%);
+  padding: 48px 20px 40px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.hero-tag {
+  display: inline-block;
+  background: white;
+  color: var(--rose);
+  border: 1px solid var(--rose-mid);
+  border-radius: 100px;
+  padding: 6px 18px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.4rem;
+  line-height: 1.1;
+  color: #1a0a10;
+  margin-bottom: 12px;
+}
+.hero h1 em { font-style: italic; color: var(--rose); }
+.hero-sub { font-size: 14px; color: var(--muted); margin-bottom: 20px; line-height: 1.7; }
+.pills { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.pill {
+  display: flex; align-items: center; gap: 6px;
+  background: white; border: 1px solid var(--border);
+  border-radius: 100px; padding: 6px 14px;
+  font-size: 12px; font-weight: 500;
+}
+.pill .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+/* CONTAINER */
+.container { max-width: 680px; margin: 0 auto; padding: 0 16px; }
+
+/* SECTION */
+.section-wrap { padding: 40px 0 0; }
+.sec-label {
+  display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+}
+.sec-label span {
+  font-size: 10px; font-weight: 700; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--rose); white-space: nowrap;
+}
+.sec-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+/* WEEK GRID */
+.week-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr);
+  gap: 6px; margin-bottom: 40px;
+}
+.wday {
+  background: white; border: 1px solid var(--border);
+  border-radius: 12px; padding: 10px 4px; text-align: center;
+}
+.wday.active { background: #FFF0F5; border-color: var(--rose-mid); }
+.wday.rest-day { opacity: 0.5; }
+.wday-name { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 5px; }
+.wday-icon { font-size: 18px; margin-bottom: 4px; display: block; }
+.wday-focus { font-size: 9px; font-weight: 600; line-height: 1.3; color: var(--text); }
+.wday.active .wday-focus { color: var(--rose-dark); }
+.wday.rest-day .wday-focus { color: var(--muted); font-style: italic; }
+
+/* DAY SELECTOR — scrollable horizontal */
+.day-selector {
+  display: flex;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 4px 2px 12px;
+  margin-bottom: 20px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.day-selector::-webkit-scrollbar { display: none; }
+.day-btn {
+  flex-shrink: 0;
+  padding: 12px 20px;
+  border-radius: 50px;
+  border: 1.5px solid var(--border);
+  background: white;
+  color: var(--muted);
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  min-height: 44px;
+}
+.day-btn.active {
+  background: var(--rose);
+  border-color: var(--rose);
+  color: white;
+}
+.day-btn.rest-btn.active {
+  background: var(--warm-gray);
+  border-color: var(--border);
+  color: var(--muted);
+}
+
+/* TAB CONTENT */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* DAY CARD */
+.day-card {
+  background: white; border: 1px solid var(--border);
+  border-radius: 20px; overflow: hidden;
+  box-shadow: 0 2px 16px rgba(232,104,138,0.07);
+  margin-bottom: 32px;
+}
+.day-header {
+  background: linear-gradient(135deg, #FBEAF0, #FFF5F8);
+  padding: 20px; border-bottom: 1px solid var(--border);
+}
+.day-num { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rose); margin-bottom: 4px; }
+.day-title { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: #1a0a10; line-height: 1.2; margin-bottom: 12px; }
+.badges { display: flex; gap: 6px; flex-wrap: wrap; }
+.badge { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; }
+.badge-rose { background: #FBEAF0; color: var(--rose-dark); border: 1px solid var(--rose-mid); }
+.badge-lilac { background: var(--lilac-light); color: #7B4FA0; border: 1px solid #DCC8EA; }
+.badge-mint { background: var(--mint-light); color: #2F8A6C; border: 1px solid #B5E3D4; }
+.badge-peach { background: var(--peach-light); color: #B05A18; border: 1px solid #F4C89A; }
+
+/* WARMUP */
+.warmup-box {
+  background: rgba(232,104,138,0.05);
+  border-left: 3px solid var(--rose);
+  padding: 14px 20px;
+  font-size: 13px; color: var(--muted);
+  border-bottom: 1px solid var(--border);
+}
+.warmup-box strong { color: var(--rose-dark); }
+
+/* EXERCISE LIST — cards instead of table on mobile */
+.ex-list { padding: 8px 0; }
+.ex-item {
+  padding: 16px 20px;
+  border-bottom: 1px solid #FAF0F3;
+}
+.ex-item:last-child { border-bottom: none; }
+.ex-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.ex-name { font-weight: 700; font-size: 14px; color: var(--text); flex: 1; }
+.sets { font-weight: 700; font-size: 13px; color: var(--rose-dark); white-space: nowrap; }
+.ex-mid { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.muscle-tag {
+  display: inline-block; font-size: 11px; font-weight: 600;
+  padding: 3px 10px; border-radius: 6px; white-space: nowrap;
+}
+.m-glutes { background: #FBEAF0; color: var(--rose-dark); }
+.m-quads { background: var(--lilac-light); color: #7B4FA0; }
+.m-ischios { background: var(--peach-light); color: #B05A18; }
+.m-calves { background: var(--mint-light); color: #2F8A6C; }
+.m-cardio { background: var(--warm-gray); color: var(--muted); }
+.rest-badge {
+  font-size: 11px; color: var(--muted); background: var(--warm-gray);
+  padding: 3px 10px; border-radius: 6px;
+}
+.ex-tip { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* COOLDOWN */
+.cooldown-box {
+  background: rgba(126,200,176,0.07);
+  border-left: 3px solid var(--mint);
+  padding: 14px 20px;
+  font-size: 13px; color: var(--muted);
+  border-top: 1px solid var(--border);
+}
+.cooldown-box strong { color: #2F8A6C; }
+
+/* REST CARD */
+.rest-card {
+  background: white; border: 1px solid var(--border);
+  border-radius: 20px; padding: 48px 24px;
+  text-align: center; margin-bottom: 32px;
+}
+.rest-emoji { font-size: 3rem; margin-bottom: 16px; display: block; }
+.rest-card h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--muted); margin-bottom: 10px; }
+.rest-card p { font-size: 14px; color: var(--muted); line-height: 1.8; }
+
+/* NUTRITION */
+.macro-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+.macro-card { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+.macro-lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.macro-val { font-family: 'Playfair Display', serif; font-size: 1.8rem; line-height: 1; }
+.macro-desc { font-size: 11px; color: var(--muted); margin-top: 5px; line-height: 1.5; }
+
+.meals { display: flex; flex-direction: column; gap: 8px; }
+.meal { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 14px 18px; }
+.meal-time { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--rose); margin-bottom: 4px; }
+.meal-body strong { display: block; font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+.meal-body span { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* TIPS */
+.tips-list { display: flex; flex-direction: column; gap: 10px; }
+.tip { background: white; border: 1px solid var(--border); border-radius: 14px; padding: 16px; display: flex; gap: 12px; }
+.tip-icon { font-size: 1.4rem; flex-shrink: 0; }
+.tip-body strong { display: block; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 3px; }
+.tip-body p { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+.footer { text-align: center; padding: 40px 20px 56px; font-size: 11px; color: var(--muted); line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-tag">Programme Personnalisé • Bas du Corps</div>
+  <h1>Jambes & fessiers<br><em>au maximum</em></h1>
+  <p class="hero-sub">5 séances / semaine · 2 jours de repos<br>1h à 1h30 par séance · Focus fessiers & cuisses</p>
+  <div class="pills">
+    <div class="pill"><span class="dot" style="background:var(--rose)"></span>Fessiers en priorité</div>
+    <div class="pill"><span class="dot" style="background:var(--lilac)"></span>65 kg · 1m65</div>
+    <div class="pill"><span class="dot" style="background:var(--mint)"></span>Niveau basket</div>
+    <div class="pill"><span class="dot" style="background:var(--peach)"></span>Salle maison</div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="section-wrap">
+    <div class="sec-label"><span>La semaine</span></div>
+    <div class="week-grid">
+      <div class="wday active"><div class="wday-name">Lun</div><span class="wday-icon">🍑</span><div class="wday-focus">Fessiers Cuisses</div></div>
+      <div class="wday active"><div class="wday-name">Mar</div><span class="wday-icon">🚴</span><div class="wday-focus">Cardio Gainage</div></div>
+      <div class="wday active"><div class="wday-name">Mer</div><span class="wday-icon">💪</span><div class="wday-focus">Ischio Chaîne post.</div></div>
+      <div class="wday rest-day"><div class="wday-name">Jeu</div><span class="wday-icon">😴</span><div class="wday-focus">Repos</div></div>
+      <div class="wday active"><div class="wday-name">Ven</div><span class="wday-icon">🦵</span><div class="wday-focus">Quads Latéraux</div></div>
+      <div class="wday active"><div class="wday-name">Sam</div><span class="wday-icon">👑</span><div class="wday-focus">Full lourd</div></div>
+      <div class="wday rest-day"><div class="wday-name">Dim</div><span class="wday-icon">🌸</span><div class="wday-focus">Repos</div></div>
+    </div>
+  </div>
+
+  <div class="section-wrap">
+    <div class="sec-label"><span>Programme détaillé</span></div>
+
+    <div class="day-selector" id="daySelector">
+      <button class="day-btn active" data-day="lundi">🍑 Lundi</button>
+      <button class="day-btn" data-day="mardi">🚴 Mardi</button>
+      <button class="day-btn" data-day="mercredi">💪 Mercredi</button>
+      <button class="day-btn rest-btn" data-day="jeudi">😴 Jeudi</button>
+      <button class="day-btn" data-day="vendredi">🦵 Vendredi</button>
+      <button class="day-btn" data-day="samedi">👑 Samedi</button>
+      <button class="day-btn rest-btn" data-day="dimanche">🌸 Dimanche</button>
+    </div>
+
+    <!-- LUNDI -->
+    <div id="tab-lundi" class="tab-content active">
+      <div class="day-card">
+        <div class="day-header">
+          <div class="day-num">Lundi · Séance 1</div>
+          <div class="day-title">Fessiers & Quadriceps</div>
+          <div class="badges">
+            <span class="badge badge-rose">~65 min</span>
+            <span class="badge badge-lilac">Priorité fessiers</span>
+            <span class="badge badge-mint">Barre + Haltères</span>
+          </div>
+        </div>
+        <div class="warmup-box"><strong>🔥 Échauffement 10 min :</strong> 5 min vélo léger → 20 squats sans charge → 15 fentes en marchant → 10 rotations de hanches de chaque côté.</div>
+        <div class="ex-list">
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">🏆 Hip Thrust avec barre</div><div class="sets">4 × 12–15</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Fessiers</span><span class="rest-badge">Repos 90 sec</span></div>
+            <div class="ex-tip">Dos appuyé sur le banc, barre sur le bassin (mettre une serviette pour le confort). Pousser le bassin vers le haut, dos horizontal. Serrer fort le fessier en haut !</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Squat avec barre ou haltère goblet</div><div class="sets">4 × 10–12</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-quads">Quadriceps</span><span class="rest-badge">Repos 90 sec</span></div>
+            <div class="ex-tip">Pieds écartés largeur des épaules, descendre jusqu'aux cuisses parallèles au sol, remonter en poussant sur les talons. Dos bien droit.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Fente bulgare avec haltères</div><div class="sets">3 × 10 / côté</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Fessiers</span><span class="rest-badge">Repos 75 sec</span></div>
+            <div class="ex-tip">Pied arrière posé sur le banc, descendre jusqu'à ce que le genou avant soit à 90°, remonter. Un des exercices les plus efficaces pour gainer le fessier.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Donkey kick à la poulie basse</div><div class="sets">3 × 15 / côté</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Fessiers</span><span class="rest-badge">Repos 60 sec</span></div>
+            <div class="ex-tip">À quatre pattes face à la poulie, cheville attachée. Envoyer la jambe tendue vers l'arrière en haut. Bien contracter le fessier en position haute.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Extension de jambes (machine)</div><div class="sets">3 × 15</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-quads">Quadriceps</span><span class="rest-badge">Repos 60 sec</span></div>
+            <div class="ex-tip">Si pas de machine, remplacer par un squat avec pause de 3 secondes en bas. Isole le devant des cuisses.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Montées de mollets debout</div><div class="sets">4 × 20</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-calves">Mollets</span><span class="rest-badge">Repos 45 sec</span></div>
+            <div class="ex-tip">Tenir un haltère, monter sur la pointe des pieds, tenir 1 seconde en haut. Amplitude complète.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Glute bridge unilatéral — finisher 🔥</div><div class="sets">2 × 20 / côté</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Fessiers</span><span class="rest-badge">Repos 45 sec</span></div>
+            <div class="ex-tip">Allongée sur le dos, une jambe en l'air, pousser fort avec le talon posé. Terminer la séance en brûlure !</div>
+          </div>
+        </div>
+        <div class="cooldown-box"><strong>🧊 Retour au calme 8 min :</strong> Étirement piriforme (figure 4), fente basse pour les hanches, étirement ischio-jambiers jambe tendue. 30 à 45 sec par position.</div>
+      </div>
+    </div>
+
+    <!-- MARDI -->
+    <div id="tab-mardi" class="tab-content">
+      <div class="day-card">
+        <div class="day-header">
+          <div class="day-num">Mardi · Séance 2</div>
+          <div class="day-title">Cardio HIIT + Gainage</div>
+          <div class="badges">
+            <span class="badge badge-rose">~60 min</span>
+            <span class="badge badge-peach">Brûle-graisses</span>
+            <span class="badge badge-mint">Vélo + sol</span>
+          </div>
+        </div>
+        <div class="warmup-box"><strong>🔥 Échauffement 5 min :</strong> Marche rapide sur le vélo en montant progressivement la résistance. Rythme cardiaque modéré avant de commencer.</div>
+        <div class="ex-list">
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">🚴 HIIT Vélo — intervalles</div><div class="sets">15 × 20 sec</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-cardio">Cardio</span><span class="rest-badge">40 sec actif</span></div>
+            <div class="ex-tip">20 secondes à fond (sprint max) puis 40 secondes à allure modérée. Répéter 15 fois. Redoutablement efficace pour brûler des calories tout en préservant le muscle.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Squat sumo sauté</div><div class="sets">4 × 15</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Fessiers</span><span class="rest-badge">Repos 45 sec</span></div>
+            <div class="ex-tip">Pieds très écartés, pointes vers l'extérieur. Descendre en squat puis exploser vers le haut. Réception souple. Travaille les fessiers et l'explosivité.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Abduction couchée sur le côté</div><div class="sets">3 × 25 / côté</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Moyen fessier</span><span class="rest-badge">Repos 40 sec</span></div>
+            <div class="ex-tip">Allongée sur le côté, jambe du dessus tendue, remonter vers le plafond lentement. C'est l'exercice pour la forme arrondie sur le côté de la hanche.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Fire hydrant (à 4 pattes)</div><div class="sets">3 × 20 / côté</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Moyen fessier</span><span class="rest-badge">Repos 40 sec</span></div>
+            <div class="ex-tip">À quatre pattes, genou fléchi à 90°, lever la jambe sur le côté. Mouvement lent et contrôlé, garder le dos droit sans se pencher.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Planche avec ouverture de jambe</div><div class="sets">3 × 30 sec</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-cardio">Core + Fessiers</span><span class="rest-badge">Repos 30 sec</span></div>
+            <div class="ex-tip">En position de planche sur les coudes, lever une jambe latéralement puis la reposer. Gainage + activation fessier en même temps.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Relevé de jambes allongée</div><div class="sets">3 × 15</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-cardio">Abdominaux</span><span class="rest-badge">Repos 30 sec</span></div>
+            <div class="ex-tip">Allongée sur le dos, jambes tendues, les remonter à 90° en soulevant légèrement le bas du dos. Important pour la posture avec un programme jambes intensif.</div>
+          </div>
+        </div>
+        <div class="cooldown-box"><strong>🧊 Retour au calme 8 min :</strong> Pigeon pose, torsion allongée, genoux ramenés à la poitrine. Respiration profonde.</div>
+      </div>
+    </div>
+
+    <!-- MERCREDI -->
+    <div id="tab-mercredi" class="tab-content">
+      <div class="day-card">
+        <div class="day-header">
+          <div class="day-num">Mercredi · Séance 3</div>
+          <div class="day-title">Ischio-jambiers & Chaîne postérieure</div>
+          <div class="badges">
+            <span class="badge badge-rose">~70 min</span>
+            <span class="badge badge-peach">Arrière des cuisses</span>
+            <span class="badge badge-mint">Barre + Haltères</span>
+          </div>
+        </div>
+        <div class="warmup-box"><strong>🔥 Échauffement 10 min :</strong> 5 min vélo léger + 10 Good mornings à vide + 15 fentes en marchant + 10 balancements de jambe de chaque côté.</div>
+        <div class="ex-list">
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">🏆 Romanian Deadlift (RDL) à la barre</div><div class="sets">4 × 10–12</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-ischios">Ischio-jambiers</span><span class="rest-badge">Repos 90 sec</span></div>
+            <div class="ex-tip">Debout, barre tenue devant soi, jambes presque tendues. Descendre la barre le long des jambes en poussant les hanches vers l'arrière jusqu'à sentir l'étirement dans l'arrière des cuisses. Dos plat obligatoire !</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Hip Thrust unilatéral avec haltère</div><div class="sets">4 × 12 / côté</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Fessiers</span><span class="rest-badge">Repos 75 sec</span></div>
+            <div class="ex-tip">Même mouvement que le hip thrust classique mais une seule jambe à la fois. Excellente pour corriger les déséquilibres entre les deux côtés.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Good morning avec haltères</div><div class="sets">3 × 12</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-ischios">Ischio-jambiers</span><span class="rest-badge">Repos 75 sec</span></div>
+            <div class="ex-tip">Haltères posés sur les épaules, se pencher vers l'avant en gardant le dos parfaitement droit. Sentir l'étirement de l'arrière des cuisses, revenir debout.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Fente inverse avec haltères</div><div class="sets">3 × 10 / côté</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Fessiers + Ischios</span><span class="rest-badge">Repos 60 sec</span></div>
+            <div class="ex-tip">Partir debout, faire un grand pas en arrière, descendre jusqu'à ce que le genou arrière frôle le sol, remonter. Le genou avant reste au-dessus du talon.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Kickback à la poulie basse</div><div class="sets">3 × 15 / côté</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Grand fessier</span><span class="rest-badge">Repos 60 sec</span></div>
+            <div class="ex-tip">Cheville attachée à la poulie basse, se tenir au cadre, envoyer la jambe tendue vers l'arrière. Monter lentement, redescendre encore plus lentement.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Tirage assis à la machine dos</div><div class="sets">3 × 12</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-cardio">Dos + Lombaires</span><span class="rest-badge">Repos 60 sec</span></div>
+            <div class="ex-tip">S'asseoir à la machine, tirer la barre vers le nombril en gardant le dos droit. Indispensable pour équilibrer les muscles de la chaîne postérieure.</div>
+          </div>
+        </div>
+        <div class="cooldown-box"><strong>🧊 Retour au calme 8 min :</strong> Étirement ischio-jambiers jambe tendue, pigeon pose long 2 min par côté, rouleau de massage si disponible.</div>
+      </div>
+    </div>
+
+    <!-- JEUDI REPOS -->
+    <div id="tab-jeudi" class="tab-content">
+      <div class="rest-card">
+        <span class="rest-emoji">😴</span>
+        <h3>Jeudi — Repos actif</h3>
+        <p>Le muscle pousse pendant le repos, pas pendant l'effort. C'est maintenant que les fibres se reconstruisent plus grosses. Une marche légère de 30 min, du stretching ou un yoga doux c'est parfait. Pas de musculation aujourd'hui.</p>
+      </div>
+    </div>
+
+    <!-- VENDREDI -->
+    <div id="tab-vendredi" class="tab-content">
+      <div class="day-card">
+        <div class="day-header">
+          <div class="day-num">Vendredi · Séance 4</div>
+          <div class="day-title">Quadriceps & Fessiers latéraux</div>
+          <div class="badges">
+            <span class="badge badge-rose">~65 min</span>
+            <span class="badge badge-lilac">Volume & galbe</span>
+            <span class="badge badge-mint">Barre + Poulie</span>
+          </div>
+        </div>
+        <div class="warmup-box"><strong>🔥 Échauffement 8 min :</strong> 5 min vélo modéré + 15 squats sumo à vide + 2 allers-retours de fentes en marchant.</div>
+        <div class="ex-list">
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">🏆 Fente bulgare avec pause 3 sec</div><div class="sets">4 × 8 / côté</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-quads">Quads + Fessiers</span><span class="rest-badge">Repos 90 sec</span></div>
+            <div class="ex-tip">Pied arrière sur le banc, descendre et TENIR 3 secondes en bas sans rebond. Cette pause supprime l'élan et force le muscle à 100%. Difficile mais très efficace.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Squat sumo haltère (pieds très écartés)</div><div class="sets">4 × 12</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Fessiers + Adducteurs</span><span class="rest-badge">Repos 75 sec</span></div>
+            <div class="ex-tip">Pieds à 2× la largeur des épaules, pointes à 45°, haltère entre les jambes. Descendre profond. Cible l'intérieur des cuisses et les fessiers.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Step-up sur banc avec haltères</div><div class="sets">3 × 12 / côté</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-quads">Quads + Fessiers</span><span class="rest-badge">Repos 60 sec</span></div>
+            <div class="ex-tip">Poser un pied sur le banc, monter en poussant uniquement avec cette jambe. L'autre ne doit pas donner d'élan. Similaire aux mouvements du basket.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Abduction à la poulie debout</div><div class="sets">4 × 15 / côté</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Moyen fessier</span><span class="rest-badge">Repos 60 sec</span></div>
+            <div class="ex-tip">Cheville attachée à la poulie basse, se tenir au cadre, envoyer la jambe tendue sur le côté. L'exercice pour bomber les hanches sur les côtés.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Squat barre 20 reps — finisher 🔥</div><div class="sets">2 × 20</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-quads">Quadriceps</span><span class="rest-badge">Repos 2 min</span></div>
+            <div class="ex-tip">Charge légère, 20 répétitions sans s'arrêter. Les dernières font très mal et c'est tout l'intérêt — afflux sanguin massif qui stimule la croissance musculaire.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Montées de mollets assis sur banc</div><div class="sets">4 × 20</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-calves">Mollets</span><span class="rest-badge">Repos 45 sec</span></div>
+            <div class="ex-tip">Assis sur le banc, haltère sur les genoux, monter sur la pointe des pieds en amplitude complète. Travailler lentement.</div>
+          </div>
+        </div>
+        <div class="cooldown-box"><strong>🧊 Retour au calme 7 min :</strong> Étirement quadriceps debout, fente profonde pour les hanches, rotations de chevilles.</div>
+      </div>
+    </div>
+
+    <!-- SAMEDI -->
+    <div id="tab-samedi" class="tab-content">
+      <div class="day-card">
+        <div class="day-header">
+          <div class="day-num">Samedi · Séance 5</div>
+          <div class="day-title">👑 Full Bas du Corps — Séance Reine</div>
+          <div class="badges">
+            <span class="badge badge-rose">~80 min</span>
+            <span class="badge badge-lilac">Séance la + intense</span>
+            <span class="badge badge-peach">Full équipement</span>
+          </div>
+        </div>
+        <div class="warmup-box"><strong>🔥 Échauffement complet 12 min :</strong> 8 min vélo progressif + 2 séries de squats légers + activation des fessiers avec élastique autour des genoux si disponible.</div>
+        <div class="ex-list">
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">🏆 Soulevé de terre (Deadlift) classique</div><div class="sets">4 × 8–10</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-ischios">Tout le bas du corps</span><span class="rest-badge">Repos 2 min</span></div>
+            <div class="ex-tip">Barre au sol, pieds écartés largeur du bassin, attraper la barre, dos plat comme une planche, pousser le sol avec les pieds pour se relever. L'exercice roi qui travaille tout en même temps.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Hip Thrust barre — version lourde</div><div class="sets">4 × 10</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Fessiers</span><span class="rest-badge">Repos 90 sec</span></div>
+            <div class="ex-tip">C'est la séance pour mettre le plus lourd possible. Chaque semaine, essayer d'ajouter 2,5 kg. La progression de charge est ce qui sculpte les fessiers.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Squat goblet tempo lent (3-1-1)</div><div class="sets">3 × 12</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-quads">Quads + Fessiers</span><span class="rest-badge">Repos 75 sec</span></div>
+            <div class="ex-tip">3 secondes pour descendre, 1 seconde de pause en bas, 1 seconde pour remonter. Le tempo lent multiplie le temps sous tension musculaire. Haltère tenu devant la poitrine.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Romanian Deadlift sur une jambe</div><div class="sets">3 × 10 / côté</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-ischios">Ischio-jambiers</span><span class="rest-badge">Repos 75 sec</span></div>
+            <div class="ex-tip">Haltère dans une main, se pencher en avant en levant la jambe opposée vers l'arrière, garder l'équilibre. Exceptionnel pour l'arrière des cuisses et l'équilibre.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Fentes latérales avec haltères</div><div class="sets">3 × 10 / côté</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Fessiers + Adducteurs</span><span class="rest-badge">Repos 60 sec</span></div>
+            <div class="ex-tip">Pas large sur le côté, fléchir le genou de la jambe qui part jusqu'à 90°, l'autre reste tendue. Ultra-efficace pour l'intérieur des cuisses et les fessiers.</div>
+          </div>
+          <div class="ex-item">
+            <div class="ex-top"><div class="ex-name">Circuit finisher sans repos 🔥</div><div class="sets">3 tours</div></div>
+            <div class="ex-mid"><span class="muscle-tag m-glutes">Isolation fessiers</span><span class="rest-badge">90 sec entre tours</span></div>
+            <div class="ex-tip">20 glute bridges → 15 fire hydrants par côté → 15 clamshells par côté (allongée sur le côté, genou relevé). Enchaîner sans pause entre les 3 exercices.</div>
+          </div>
+        </div>
+        <div class="cooldown-box"><strong>🧊 Retour au calme complet 12 min :</strong> Pigeon pose 2 min par côté, figure 4 allongée, fente profonde, enfant allongé, rouleau de massage sur fessiers et ischios.</div>
+      </div>
+    </div>
+
+    <!-- DIMANCHE REPOS -->
+    <div id="tab-dimanche" class="tab-content">
+      <div class="rest-card">
+        <span class="rest-emoji">🌸</span>
+        <h3>Dimanche — Repos complet</h3>
+        <p>Repos total et mérité. Le corps reconstruit chaque fibre musculaire pour qu'elle soit plus forte. Boire beaucoup, dormir 8h+, et si envie, une petite marche ou des étirements doux seulement.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- NUTRITION -->
+  <div class="section-wrap">
+    <div class="sec-label"><span>Alimentation</span></div>
+    <div class="macro-grid">
+      <div class="macro-card">
+        <div class="macro-lbl">Calories</div>
+        <div class="macro-val" style="color:var(--rose)">2 000 <span style="font-size:1rem">kcal</span></div>
+        <div class="macro-desc">+200 les jours de séance, maintien les jours de repos</div>
+      </div>
+      <div class="macro-card">
+        <div class="macro-lbl">Protéines</div>
+        <div class="macro-val" style="color:var(--rose-dark)">130 g</div>
+        <div class="macro-desc">2g par kilo. Indispensable pour construire le muscle</div>
+      </div>
+      <div class="macro-card">
+        <div class="macro-lbl">Glucides</div>
+        <div class="macro-val" style="color:var(--lilac)">220 g</div>
+        <div class="macro-desc">Carburant des séances. Plus élevé les jours lourds</div>
+      </div>
+      <div class="macro-card">
+        <div class="macro-lbl">Lipides</div>
+        <div class="macro-val" style="color:var(--peach)">65 g</div>
+        <div class="macro-desc">Avocat, noix, huile d'olive. Clés pour les hormones</div>
+      </div>
+    </div>
+    <div class="meals">
+      <div class="meal"><div class="meal-time">7h — Réveil</div><div class="meal-body"><strong>Petit déjeuner</strong><span>60g flocons d'avoine · 2 œufs brouillés · 1 banane · 15g amandes → ~550 kcal / 30g protéines</span></div></div>
+      <div class="meal"><div class="meal-time">10h30 — Snack</div><div class="meal-body"><strong>Collation pré-séance</strong><span>200g fromage blanc 0% + miel + fruits rouges → ~200 kcal / 20g protéines</span></div></div>
+      <div class="meal"><div class="meal-time">13h — Déjeuner</div><div class="meal-body"><strong>Repas principal</strong><span>150g riz basmati · 150g poulet ou saumon · légumes verts · huile d'olive → ~600 kcal / 40g protéines</span></div></div>
+      <div class="meal"><div class="meal-time">Post-séance</div><div class="meal-body"><strong>Récupération — dans les 45 min</strong><span>Shake whey ou skyr + banane → ~250 kcal / 25g protéines</span></div></div>
+      <div class="meal"><div class="meal-time">19h30 — Dîner</div><div class="meal-body"><strong>Repas du soir</strong><span>Poisson blanc ou 2 œufs + 100g quinoa + légumes rôtis + ½ avocat → ~500 kcal / 35g protéines</span></div></div>
+    </div>
+  </div>
+
+  <!-- TIPS -->
+  <div class="section-wrap" style="padding-bottom: 48px;">
+    <div class="sec-label"><span>Conseils clés</span></div>
+    <div class="tips-list">
+      <div class="tip"><div class="tip-icon">📈</div><div class="tip-body"><strong>Augmenter les charges chaque semaine</strong><p>Même +1 kg sur la barre, c'est une progression. C'est ce principe qui force le muscle à se développer. Sans progression, pas de changement visible.</p></div></div>
+      <div class="tip"><div class="tip-icon">🧠</div><div class="tip-body"><strong>Penser au muscle qu'on travaille</strong><p>Sur chaque répétition, visualiser et contracter consciemment le fessier. Les études montrent que ça active jusqu'à 30% de fibres en plus.</p></div></div>
+      <div class="tip"><div class="tip-icon">💤</div><div class="tip-body"><strong>Le muscle pousse la nuit</strong><p>8h de sommeil minimum. L'hormone de croissance est sécrétée pendant le sommeil profond. Mauvais sommeil = résultats annulés.</p></div></div>
+      <div class="tip"><div class="tip-icon">💧</div><div class="tip-body"><strong>2 à 2,5 litres d'eau par jour</strong><p>La déshydratation baisse les performances de 10 à 20%. Avoir sa gourde avec soi toute la journée, pas juste à l'entraînement.</p></div></div>
+      <div class="tip"><div class="tip-icon">🏀</div><div class="tip-body"><strong>Le basket compte comme cardio</strong><p>Les entraînements basket font partie du programme. Si les jambes sont épuisées avant une séance lourde, alléger les charges ce jour-là.</p></div></div>
+      <div class="tip"><div class="tip-icon">📏</div><div class="tip-body"><strong>Mesurer, pas juste peser</strong><p>Tour de hanches et de cuisses toutes les 3 semaines. La balance peut stagner alors que le corps change complètement — le muscle est plus dense que la graisse.</p></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  Programme conçu pour ~65 kg · 1m65 · niveau sportif (basket) · salle à la maison 🏠
+</div>
+
+<script>
+  var btns = document.querySelectorAll('.day-btn');
+  btns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var day = this.getAttribute('data-day');
+      document.querySelectorAll('.tab-content').forEach(function(el) { el.classList.remove('active'); });
+      document.querySelectorAll('.day-btn').forEach(function(el) { el.classList.remove('active'); });
+      document.getElementById('tab-' + day).classList.add('active');
+      this.classList.add('active');
+      this.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+    });
+  });
+</script>
+</body>
+</html>
